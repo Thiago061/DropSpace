@@ -1,10 +1,11 @@
-package br.com.zonageo.controller;
+package br.com.zonageo.controller.app;
 
 import br.com.zonageo.dto.AppDtos.*;
 import br.com.zonageo.dto.AuthDtos.UsuarioDto;
 import br.com.zonageo.model.Usuario;
 import br.com.zonageo.security.UsuarioAtual;
 import br.com.zonageo.service.LocalidadeService;
+import br.com.zonageo.service.GeminiRecomendacaoService;
 import br.com.zonageo.service.RotaService;
 import br.com.zonageo.service.VoucherService;
 import jakarta.validation.Valid;
@@ -27,12 +28,15 @@ public class AppController {
     private final LocalidadeService localidade;
     private final RotaService rotas;
     private final VoucherService vouchers;
+    private final GeminiRecomendacaoService gemini;
 
-    public AppController(UsuarioAtual atual, LocalidadeService localidade, RotaService rotas, VoucherService vouchers) {
+    public AppController(UsuarioAtual atual, LocalidadeService localidade, RotaService rotas,
+                         VoucherService vouchers, GeminiRecomendacaoService gemini) {
         this.atual = atual;
         this.localidade = localidade;
         this.rotas = rotas;
         this.vouchers = vouchers;
+        this.gemini = gemini;
     }
 
     @GetMapping("/me")
@@ -48,6 +52,14 @@ public class AppController {
         validarCoordenadas(lat, lon);
         int raioM = raio == null ? RAIO_PADRAO_M : Math.max(200, Math.min(raio, RAIO_MAX_M));
         return localidade.consultar(atual.exigir(jwt), lat, lon, raioM);
+    }
+
+    /** Resumo opcional por IA; o cliente envia apenas categorias e prioridades das recomendações recebidas. */
+    @PostMapping("/recomendacoes/resumo")
+    public ResumoRecomendacoesResposta resumirRecomendacoes(@AuthenticationPrincipal Jwt jwt,
+            @Valid @RequestBody ResumoRecomendacoesRequest req) {
+        atual.exigir(jwt);
+        return new ResumoRecomendacoesResposta(gemini.resumir(req.recomendacoes()), gemini.aviso());
     }
 
     /** Rota com paradas de apoio. Exclusivo do plano Pro. */
@@ -71,7 +83,7 @@ public class AppController {
     @PostMapping("/vouchers") @ResponseStatus(HttpStatus.CREATED)
     public VoucherDto emitirVoucher(@AuthenticationPrincipal Jwt jwt, @Valid @RequestBody VoucherRequest req) {
         Usuario u = atual.exigir(jwt);
-        return vouchers.emitir(u.getId(), req.pontoId(), req.latitude(), req.longitude());
+        return vouchers.emitir(u.getId(), req.pontoId(), req.ofertaId(), req.latitude(), req.longitude());
     }
 
     @GetMapping("/vouchers")

@@ -11,6 +11,25 @@
 - **API do app** (`/api/app/**`): recomendações, rota e vouchers. Exige login.
 - **Admin API** (`/api/admin/**`, `/api/ocorrencias/**`, `/api/localizacoes/**`, `/api/medicoes/**`, `/api/dashboard/**`): só papel `ADMIN`.
 
+## Organização do código
+```
+src/main/java/br/com/zonageo
+├── config/        propriedades tipadas, dados iniciais
+├── security/      Spring Security, JWT, limite de tentativas de login
+├── controller/
+│   ├── publico/   login/cadastro, planos, saúde (sem autenticação)
+│   ├── app/       endpoints do aplicativo Android (usuário logado)
+│   └── admin/     um controller por assunto: pontos, ofertas, vouchers, usuários, lugares, ocorrências...
+├── service/       regras de negócio (controllers só recebem e devolvem)
+├── repository/    acesso ao banco (JPA + consultas PostGIS)
+├── model/         entidades          dto/  contratos de entrada/saída
+src/main/resources/static
+├── index.html, css/site.css, js/site.js        página de vendas
+└── admin/index.html, css/app.css, vendor/leaflet
+    js/admin/  api.js · auth.js · dados.js · seletor-local.js · util.js · main.js
+               paginas/ painel · pontos · ocorrencias · vouchers · usuarios
+```
+
 ## Pacotes (`br.com.zonageo`)
 | Pacote | Responsabilidade |
 |---|---|
@@ -41,7 +60,7 @@
 3. **Provedor de clima comercial**: o plano gratuito da Open-Meteo é para uso não comercial.
 4. **Refresh token** e revogação de sessões; limite de login em Redis se houver mais de uma instância.
 5. **HTTPS e proxy reverso** em produção (`server.forward-headers-strategy=framework` atrás de proxy).
-6. **Controllers legados** (`/api/localizacoes`, `/api/medicoes`, `/api/ocorrencias`) ainda recebem entidades JPA diretamente; migrar para DTOs.
+6. **Controllers legados** (`/api/localizacoes`, `/api/medicoes`, `/api/ocorrencias`) foram reorganizados, mas ainda recebem entidades JPA diretamente; migrar para DTOs.
 7. **Testes de integração** com Testcontainers (PostGIS) cobrindo segurança e consultas espaciais.
 8. **Lógica de "IA" para criar ocorrências automaticamente** a partir de clima + notificações push de alerta.
 9. Política de privacidade/LGPD (localização é dado pessoal) antes de publicar o app.

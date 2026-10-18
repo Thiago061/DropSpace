@@ -1,4 +1,4 @@
-package br.com.zonageo.controller;
+package br.com.zonageo.controller.publico;
 
 import br.com.zonageo.config.ZonaGeoProperties;
 import br.com.zonageo.dto.AppDtos.PlanoInfo;

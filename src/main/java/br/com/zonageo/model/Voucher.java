@@ -14,6 +14,8 @@ public class Voucher {
     private Long usuarioId;
     @Column(name = "ponto_id", nullable = false)
     private Long pontoId;
+    @Column(name = "oferta_id")
+    private Long ofertaId;
     @Column(nullable = false, length = 160)
     private String descricao;
     @Enumerated(EnumType.STRING) @Column(nullable = false, length = 20)
@@ -32,6 +34,8 @@ public class Voucher {
     public void setUsuarioId(Long usuarioId) { this.usuarioId = usuarioId; }
     public Long getPontoId() { return pontoId; }
     public void setPontoId(Long pontoId) { this.pontoId = pontoId; }
+    public Long getOfertaId() { return ofertaId; }
+    public void setOfertaId(Long ofertaId) { this.ofertaId = ofertaId; }
     public String getDescricao() { return descricao; }
     public void setDescricao(String descricao) { this.descricao = descricao; }
     public StatusVoucher getStatus() { return status; }

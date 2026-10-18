@@ -45,6 +45,21 @@ O token vale 8 h. Guarde em `EncryptedSharedPreferences`/Keystore, nunca em text
 - `tipo` do ponto: `PONTO_AGUA`, `DESCANSO_SOMBRA`, `ABRIGO_FRIO`, `MERCADO_PARCEIRO`.
 - Mostre o campo `aviso` em algum lugar fixo da tela.
 
+### Resumo opcional das recomendações com Gemini
+`POST /api/app/recomendacoes/resumo`
+```json
+{
+  "recomendacoes": [
+    { "categoria": "calor", "prioridade": "ATENCAO" },
+    { "categoria": "agua", "prioridade": "INFO" }
+  ]
+}
+```
+Resposta: `{ "resumo": "...", "aviso": "Resumo gerado por IA..." }`.
+Este recurso requer `GEMINI_API_KEY` no `.env`. O backend envia ao Gemini somente categorias e prioridades,
+sem coordenadas, nomes de pontos, endereços ou texto livre. O resumo não substitui as recomendações originais.
+Sem chave configurada, o endpoint responde `503`.
+
 ## Plano Pro
 | Recurso | Endpoint | No Free |
 |---|---|---|
@@ -52,7 +67,10 @@ O token vale 8 h. Guarde em `EncryptedSharedPreferences`/Keystore, nunca em text
 | Gerar voucher | `POST /api/app/vouchers` `{ "pontoId", "latitude", "longitude" }` | 403 |
 | Meus vouchers | `GET /api/app/vouchers` | lista vazia |
 
-Regras do voucher: só em `MERCADO_PARCEIRO` com `voucher` preenchido; o usuário precisa estar a até 500 m do local
+O corpo do voucher aceita `ofertaId` opcional (sem ele vale a primeira oferta vigente do mercado). As ofertas são cadastradas
+no painel admin; o campo `voucher` de cada ponto traz o título da oferta principal.
+
+Regras do voucher: só em `MERCADO_PARCEIRO` com oferta vigente (`voucher` preenchido); o usuário precisa estar a até 500 m do local
 (enviar a posição atual); 1 por dia; vale 120 min. Se já houver um ativo para o mesmo local, a API devolve o mesmo.
 Status: `ATIVO`, `RESGATADO`, `EXPIRADO`. Mostre o `codigo` em letras grandes para o caixa conferir.
 

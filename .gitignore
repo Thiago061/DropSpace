@@ -7,3 +7,5 @@ target/
 HELP.md
 .vscode/*.log
 .DS_Store
+
+node_modules/

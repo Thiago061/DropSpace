@@ -4,7 +4,8 @@ Plataforma que cruza **clima** (calor/frio/ar seco/UV), **ocorrências** (queima
 (água, sombra, abrigo, mercados parceiros) para dizer ao usuário **o que fazer** onde ele está.
 
 - **Web** (`/`): página de vendas dos planos e explicação do app.
-- **Admin** (`/admin/`): cadastro de pontos, ocorrências, planos e validação de vouchers.
+- **Admin** (`/admin/`): pontos de apoio (com busca de lugar), ocorrências, **vouchers** (ofertas dos parceiros, conferência no
+  caixa e histórico) e **usuários** (cadastrados, último acesso, plano, histórico de entradas).
 - **Android** (em desenvolvimento): cadastro do usuário, recomendações, mapa de pontos. Contrato em [`docs/API_MOBILE.md`](docs/API_MOBILE.md).
 
 | | Gratuito | Pro |
@@ -30,12 +31,29 @@ JDK 21 · Maven 3.6.3+ · Docker Desktop (para o PostgreSQL/PostGIS)
 O Flyway cria as tabelas na primeira execução. O administrador é criado a partir de `ZONAGEO_ADMIN_USER` e
 `ZONAGEO_ADMIN_PASSWORD` **somente se ainda não existir** (a senha é guardada com BCrypt).
 
+### Busca de lugares com Google (cadastro de pontos e ocorrências)
+No painel, ao cadastrar um ponto você digita o nome (ex.: "Sobradinho", "Atacadão Dia a Dia"), clica em **Buscar** e
+escolhe o resultado: latitude, longitude, nome e endereço são preenchidos e o marcador pode ser arrastado no mapa.
+1. No Google Cloud, crie um projeto, ative a **Places API (New)** e a cobrança, e gere uma **chave de API**.
+2. Restrinja a chave à **Places API (New)** (e, em produção, ao IP do servidor).
+3. Coloque no `.env`: `GOOGLE_MAPS_API_KEY=sua-chave` e reinicie.
+
+A chave fica **só no servidor**; o navegador nunca a vê. Sem chave (ou se o Google falhar) a busca usa o OpenStreetMap
+e avisa na tela. O mapa em si continua sendo o OpenStreetMap.
+
+### Se não conseguir entrar no painel
+- Confirme que o backend está rodando e que o `.env` está na **raiz do projeto** (é lido a partir da pasta onde o app é iniciado).
+- Depois de 10 senhas erradas, o login do mesmo usuário/IP trava por 10 min (a tela mostra quantos). Reiniciar o backend libera.
+- Esqueceu a senha do admin: no `.env`, ajuste `ZONAGEO_ADMIN_PASSWORD`, ponha `ZONAGEO_ADMIN_RESET_PASSWORD=true`, reinicie
+  uma vez e **volte para false**.
+
 ### Testar a API no VS Code
 Instale a extensão **REST Client** e abra [`docs/requests.http`](docs/requests.http): ele percorre cadastro, login,
 recomendações, plano Pro, rota e voucher.
 
 ### Testes
 - `mvn test` roda os testes unitários (motor de recomendações e cálculos geográficos).
+- Painel admin (JS, em DOM simulado, sem banco): `npm install` e depois `npm run test:front`.
 - Teste de integração (precisa do banco no ar): `ZONAGEO_TEST_DB=true mvn test`.
 
 ## Segurança: o que já existe

@@ -13,17 +13,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class LocalidadeService {
     private final ClimaService clima;
     private final OcorrenciaRepository ocorrencias;
     private final PontoApoioRepository pontos;
+    private final OfertaService ofertas;
 
-    public LocalidadeService(ClimaService clima, OcorrenciaRepository ocorrencias, PontoApoioRepository pontos) {
+    public LocalidadeService(ClimaService clima, OcorrenciaRepository ocorrencias,
+                             PontoApoioRepository pontos, OfertaService ofertas) {
         this.clima = clima;
         this.ocorrencias = ocorrencias;
         this.pontos = pontos;
+        this.ofertas = ofertas;
     }
 
     @Transactional(readOnly = true)
@@ -33,8 +37,11 @@ public class LocalidadeService {
         List<OcorrenciaProxima> proximas = ocorrencias.proximas(lat, lon, raioM).stream()
                 .map(o -> paraOcorrencia(o, lat, lon))
                 .toList();
-        List<PontoProximo> apoio = pontos.proximos(lat, lon, raioM).stream()
-                .map(p -> paraPonto(p, lat, lon))
+        List<PontoApoio> proximosPontos = pontos.proximos(lat, lon, raioM);
+        Map<Long, String> vouchers = ofertas.tituloPrincipalPorPonto(
+                proximosPontos.stream().map(PontoApoio::getId).toList());
+        List<PontoProximo> apoio = proximosPontos.stream()
+                .map(p -> paraPonto(p, lat, lon, vouchers.get(p.getId())))
                 .toList();
 
         boolean pro = usuario.isPro();
@@ -50,9 +57,9 @@ public class LocalidadeService {
                 Geo.distanciaM(lat, lon, o.getLatitude(), o.getLongitude()), o.getLatitude(), o.getLongitude());
     }
 
-    private static PontoProximo paraPonto(PontoApoio p, double lat, double lon) {
+    private static PontoProximo paraPonto(PontoApoio p, double lat, double lon, String voucher) {
         return new PontoProximo(p.getId(), p.getNome(), p.getTipo(),
                 Geo.distanciaM(lat, lon, p.getLatitude(), p.getLongitude()), p.isGratuito(), p.isSombra(),
-                p.oferecaVoucher() ? p.getVoucherDescricao() : null, p.getLatitude(), p.getLongitude());
+                voucher, p.getLatitude(), p.getLongitude());
     }
 }

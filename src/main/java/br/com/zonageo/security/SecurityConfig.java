@@ -29,13 +29,13 @@ import java.nio.charset.StandardCharsets;
 @EnableConfigurationProperties(ZonaGeoProperties.class)
 public class SecurityConfig {
 
-    /** Leaflet (unpkg), tiles do OpenStreetMap e Google Fonts. Tudo o mais só do próprio domínio. */
+    /** Scripts só do próprio domínio. Externos: tiles do OpenStreetMap e Google Fonts (só visual). */
     private static final String CSP = String.join("; ",
             "default-src 'self'",
-            "script-src 'self' https://unpkg.com",
-            "style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com",
+            "script-src 'self'",
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
             "font-src 'self' https://fonts.gstatic.com",
-            "img-src 'self' data: https://unpkg.com https://*.tile.openstreetmap.org",
+            "img-src 'self' data: https://tile.openstreetmap.org",
             "connect-src 'self'",
             "frame-ancestors 'none'",
             "base-uri 'self'",
@@ -85,12 +85,12 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .headers(h -> h
                         .contentSecurityPolicy(c -> c.policyDirectives(CSP))
-                        .referrerPolicy(r -> r.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER))
+                        .referrerPolicy(r -> r.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
                         .frameOptions(f -> f.deny()))
                 .authorizeHttpRequests(a -> a
                         // site público (página de vendas) e tela de login do painel admin
                         .requestMatchers(HttpMethod.GET, "/", "/index.html", "/favicon.ico",
-                                "/css/**", "/js/**", "/img/**", "/admin", "/admin/", "/admin/**").permitAll()
+                                "/css/**", "/js/**", "/vendor/**", "/img/**", "/admin", "/admin/", "/admin/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/health", "/api/planos").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/registro", "/api/auth/login").permitAll()
                         .requestMatchers("/error").permitAll()

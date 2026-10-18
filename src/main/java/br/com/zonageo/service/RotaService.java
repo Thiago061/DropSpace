@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -37,11 +38,14 @@ public class RotaService {
     private final ClimaService clima;
     private final PontoApoioRepository pontos;
     private final OcorrenciaRepository ocorrencias;
+    private final OfertaService ofertas;
 
-    public RotaService(ClimaService clima, PontoApoioRepository pontos, OcorrenciaRepository ocorrencias) {
+    public RotaService(ClimaService clima, PontoApoioRepository pontos,
+                       OcorrenciaRepository ocorrencias, OfertaService ofertas) {
         this.clima = clima;
         this.pontos = pontos;
         this.ocorrencias = ocorrencias;
+        this.ofertas = ofertas;
     }
 
     public static boolean distanciaValida(double oLat, double oLon, double dLat, double dLon) {
@@ -82,10 +86,12 @@ public class RotaService {
         }
         escolhidos.sort(Comparator.comparingDouble((Candidato c) -> c.proj.progresso()));
 
+        Map<Long, String> vouchers = ofertas.tituloPrincipalPorPonto(
+                escolhidos.stream().map(c -> c.ponto.getId()).toList());
         List<Parada> paradas = escolhidos.stream().map(c -> new Parada(
                 c.ponto.getId(), c.ponto.getNome(), c.ponto.getTipo(), c.ponto.getLatitude(), c.ponto.getLongitude(),
                 c.proj.progresso() * direta, c.proj.distanciaAoTrechoM(), c.ponto.isSombra(), c.ponto.isGratuito(),
-                c.ponto.oferecaVoucher() ? c.ponto.getVoucherDescricao() : null)).toList();
+                vouchers.get(c.ponto.getId()))).toList();
 
         List<AlertaRota> alertas = new ArrayList<>();
         for (Ocorrencia o : ocorrencias.proximas(meioLat, meioLon, direta / 2 + ALERTA_M)) {

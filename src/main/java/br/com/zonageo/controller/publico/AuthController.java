@@ -1,4 +1,4 @@
-package br.com.zonageo.controller;
+package br.com.zonageo.controller.publico;
 
 import br.com.zonageo.dto.AuthDtos.*;
 import br.com.zonageo.service.AuthService;
@@ -15,8 +15,8 @@ public class AuthController {
     public AuthController(AuthService auth) { this.auth = auth; }
 
     @PostMapping("/registro") @ResponseStatus(HttpStatus.CREATED)
-    public TokenResposta registrar(@Valid @RequestBody RegistroRequest req) {
-        return auth.registrar(req);
+    public TokenResposta registrar(@Valid @RequestBody RegistroRequest req, HttpServletRequest http) {
+        return auth.registrar(req, http.getRemoteAddr());
     }
 
     @PostMapping("/login")

@@ -26,17 +26,12 @@ public class PontoApoio {
     private boolean gratuito = true;
     @Column(nullable = false)
     private boolean sombra = false;
-    @Column(name = "voucher_descricao", length = 160)
-    private String voucherDescricao;
     @Column(nullable = false)
     private boolean ativo = true;
     @Column(name = "criado_em", insertable = false, updatable = false)
     private Instant criadoEm;
 
     public boolean isParceiro() { return tipo == TipoPonto.MERCADO_PARCEIRO; }
-    public boolean oferecaVoucher() {
-        return isParceiro() && voucherDescricao != null && !voucherDescricao.isBlank();
-    }
 
     public Long getId() { return id; }
     public String getNome() { return nome; }
@@ -57,8 +52,6 @@ public class PontoApoio {
     public void setGratuito(boolean gratuito) { this.gratuito = gratuito; }
     public boolean isSombra() { return sombra; }
     public void setSombra(boolean sombra) { this.sombra = sombra; }
-    public String getVoucherDescricao() { return voucherDescricao; }
-    public void setVoucherDescricao(String voucherDescricao) { this.voucherDescricao = voucherDescricao; }
     public boolean isAtivo() { return ativo; }
     public void setAtivo(boolean ativo) { this.ativo = ativo; }
     public Instant getCriadoEm() { return criadoEm; }

@@ -19,6 +19,10 @@ Content-Type: application/json
 ###
 @adminToken = {{loginAdmin.response.body.token}}
 
+### 3b. Buscar um lugar por nome (admin). Usa Google se houver chave, senão OpenStreetMap
+GET {{host}}/api/admin/lugares?q=Sobradinho
+Authorization: Bearer {{adminToken}}
+
 ### 4. Cadastrar mercado parceiro (admin)
 POST {{host}}/api/admin/pontos
 Authorization: Bearer {{adminToken}}
@@ -30,9 +34,27 @@ Content-Type: application/json
   "latitude": -15.7930,
   "longitude": -47.8840,
   "gratuito": false,
-  "sombra": false,
-  "voucherDescricao": "1 água mineral 500 ml"
+  "sombra": false
 }
+
+### 4b. Cadastrar a oferta de voucher desse mercado (troque pontoId pelo id devolvido acima)
+POST {{host}}/api/admin/ofertas
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{ "pontoId": 4, "titulo": "1 água mineral 500 ml", "descricao": "Uma por cliente", "validoAte": "2027-12-31" }
+
+### 4c. Usuários cadastrados, resumo e acessos (admin)
+GET {{host}}/api/admin/usuarios?q=&pagina=0&tamanho=20
+Authorization: Bearer {{adminToken}}
+
+###
+GET {{host}}/api/admin/usuarios/resumo
+Authorization: Bearer {{adminToken}}
+
+###
+GET {{host}}/api/admin/acessos
+Authorization: Bearer {{adminToken}}
 
 ### 5. Registrar ocorrência (admin)
 POST {{host}}/api/ocorrencias

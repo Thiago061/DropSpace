@@ -24,6 +24,10 @@ public class Usuario {
     private boolean ativo = true;
     @Column(name = "criado_em", insertable = false, updatable = false)
     private Instant criadoEm;
+    @Column(name = "ultimo_login_em")
+    private Instant ultimoLoginEm;
+    @Column(name = "total_logins", nullable = false)
+    private int totalLogins = 0;
 
     /** Plano realmente válido agora: um Pro vencido volta a ser Free. */
     public Plano planoEfetivo() {
@@ -50,4 +54,12 @@ public class Usuario {
     public boolean isAtivo() { return ativo; }
     public void setAtivo(boolean ativo) { this.ativo = ativo; }
     public Instant getCriadoEm() { return criadoEm; }
+    public Instant getUltimoLoginEm() { return ultimoLoginEm; }
+    public int getTotalLogins() { return totalLogins; }
+
+    /** Registra um acesso bem-sucedido. */
+    public void registrarAcesso() {
+        this.ultimoLoginEm = Instant.now();
+        this.totalLogins++;
+    }
 }

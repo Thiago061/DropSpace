@@ -4,6 +4,7 @@ import br.com.zonageo.config.ZonaGeoProperties;
 import br.com.zonageo.dto.AppDtos;
 import br.com.zonageo.dto.AppDtos.VoucherDto;
 import br.com.zonageo.geo.Geo;
+import br.com.zonageo.model.OfertaVoucher;
 import br.com.zonageo.model.PontoApoio;
 import br.com.zonageo.model.StatusVoucher;
 import br.com.zonageo.model.Usuario;
@@ -35,18 +36,20 @@ public class VoucherService {
     private final VoucherRepository vouchers;
     private final PontoApoioRepository pontos;
     private final UsuarioRepository usuarios;
+    private final OfertaService ofertas;
     private final ZonaGeoProperties props;
 
     public VoucherService(VoucherRepository vouchers, PontoApoioRepository pontos,
-                          UsuarioRepository usuarios, ZonaGeoProperties props) {
+                          UsuarioRepository usuarios, OfertaService ofertas, ZonaGeoProperties props) {
         this.vouchers = vouchers;
         this.pontos = pontos;
         this.usuarios = usuarios;
+        this.ofertas = ofertas;
         this.props = props;
     }
 
     @Transactional
-    public VoucherDto emitir(Long usuarioId, Long pontoId, double lat, double lon) {
+    public VoucherDto emitir(Long usuarioId, Long pontoId, Long ofertaId, double lat, double lon) {
         // trava a linha do usuário: duas requisições simultâneas não furam o limite diário
         Usuario usuario = usuarios.buscarComTrava(usuarioId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Sessão inválida."));
@@ -55,9 +58,11 @@ public class VoucherService {
         }
         PontoApoio ponto = pontos.findById(pontoId).filter(PontoApoio::isAtivo).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Ponto não encontrado."));
-        if (!ponto.oferecaVoucher()) {
+        if (!ponto.isParceiro()) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Este local não oferece voucher.");
         }
+        OfertaVoucher oferta = ofertas.ofertaVigente(pontoId, ofertaId).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Este local não tem voucher disponível agora."));
         double distancia = Geo.distanciaM(lat, lon, ponto.getLatitude(), ponto.getLongitude());
         if (distancia > props.voucher().raioValidacaoM()) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
@@ -78,7 +83,8 @@ public class VoucherService {
         v.setCodigo(gerarCodigo());
         v.setUsuarioId(usuarioId);
         v.setPontoId(pontoId);
-        v.setDescricao(ponto.getVoucherDescricao());
+        v.setOfertaId(oferta.getId());
+        v.setDescricao(oferta.getTitulo());
         v.setEmitidoEm(agora);
         v.setExpiraEm(agora.plusSeconds(props.voucher().validadeMinutos() * 60L));
         return paraDto(vouchers.save(v), ponto.getNome());

@@ -1,9 +1,11 @@
 package br.com.zonageo.config;
 
+import br.com.zonageo.model.OfertaVoucher;
 import br.com.zonageo.model.Papel;
 import br.com.zonageo.model.PontoApoio;
 import br.com.zonageo.model.TipoPonto;
 import br.com.zonageo.model.Usuario;
+import br.com.zonageo.repository.OfertaVoucherRepository;
 import br.com.zonageo.repository.PontoApoioRepository;
 import br.com.zonageo.repository.UsuarioRepository;
 import br.com.zonageo.service.AuthService;
@@ -22,13 +24,15 @@ public class DataInitializer implements ApplicationRunner {
     private final ZonaGeoProperties props;
     private final UsuarioRepository usuarios;
     private final PontoApoioRepository pontos;
+    private final OfertaVoucherRepository ofertas;
     private final PasswordEncoder encoder;
 
-    public DataInitializer(ZonaGeoProperties props, UsuarioRepository usuarios,
-                           PontoApoioRepository pontos, PasswordEncoder encoder) {
+    public DataInitializer(ZonaGeoProperties props, UsuarioRepository usuarios, PontoApoioRepository pontos,
+                           OfertaVoucherRepository ofertas, PasswordEncoder encoder) {
         this.props = props;
         this.usuarios = usuarios;
         this.pontos = pontos;
+        this.ofertas = ofertas;
         this.encoder = encoder;
     }
 
@@ -46,7 +50,17 @@ public class DataInitializer implements ApplicationRunner {
             return;
         }
         String login = AuthService.normalizarLogin(user);
-        if (usuarios.existsByLogin(login)) return; // nunca sobrescreve a senha de quem já existe
+        Usuario existente = usuarios.findByLogin(login).orElse(null);
+        if (existente != null) {
+            // Por padrão nunca sobrescreve a senha. Só com ZONAGEO_ADMIN_RESET_PASSWORD=true (recuperação de acesso).
+            if (props.admin().resetPassword()) {
+                existente.setSenhaHash(encoder.encode(senha));
+                existente.setAtivo(true);
+                usuarios.save(existente);
+                log.warn("Senha do administrador '{}' redefinida a partir do ambiente. Desligue ZONAGEO_ADMIN_RESET_PASSWORD.", login);
+            }
+            return;
+        }
         if (senha.length() < 10) {
             log.warn("A senha do administrador tem menos de 10 caracteres. Use uma senha mais forte.");
         }
@@ -80,8 +94,13 @@ public class DataInitializer implements ApplicationRunner {
         p.setLongitude(lon);
         p.setGratuito(gratuito);
         p.setSombra(sombra);
-        p.setVoucherDescricao(voucher);
         p.setDescricao("Dado de demonstração. Substitua por um local real.");
-        pontos.save(p);
+        p = pontos.save(p);
+        if (voucher != null) {
+            OfertaVoucher oferta = new OfertaVoucher();
+            oferta.setPontoId(p.getId());
+            oferta.setTitulo(voucher);
+            ofertas.save(oferta);
+        }
     }
 }

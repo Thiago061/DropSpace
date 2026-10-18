@@ -1,7 +1,6 @@
-package br.com.zonageo.controller;
+package br.com.zonageo.controller.admin;
 
 import br.com.zonageo.model.Papel;
-import br.com.zonageo.model.Plano;
 import br.com.zonageo.repository.LocalizacaoRepository;
 import br.com.zonageo.repository.MedicaoAmbientalRepository;
 import br.com.zonageo.repository.OcorrenciaRepository;
@@ -11,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +44,6 @@ public class DashboardController {
                 "ocorrenciasAbertas", ocorrencias.countByStatusNotIn(ENCERRADOS),
                 "pontosApoio", pontos.countByAtivoTrue(),
                 "usuarios", usuarios.countByPapel(Papel.USER),
-                "usuariosPro", usuarios.countByPapelAndPlano(Papel.USER, Plano.PRO));
+                "usuariosPro", usuarios.contarProVigentes(Instant.now()));
     }
 }

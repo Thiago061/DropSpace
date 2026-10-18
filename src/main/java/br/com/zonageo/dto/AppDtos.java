@@ -9,6 +9,11 @@ import br.com.zonageo.service.RecomendacaoEngine.Recomendacao;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import java.time.Instant;
 import java.util.List;
@@ -25,6 +30,16 @@ public final class AppDtos {
                                      List<OcorrenciaProxima> ocorrencias,
                                      List<PontoProximo> pontos, String aviso) {}
 
+    /** O Gemini recebe apenas categorias e prioridades; sem texto livre, coordenadas ou nomes de locais. */
+    public record ResumoRecomendacoesRequest(
+            @NotEmpty @Size(max = 12) List<@Valid ItemRecomendacaoResumo> recomendacoes) {}
+
+    public record ItemRecomendacaoResumo(
+            @NotBlank @Pattern(regexp = "(?i)clima|umidade|uv|calor|frio|ocorrencia|pontos|agua|sombra|abrigo|parceiro") String categoria,
+            @NotBlank @Pattern(regexp = "INFO|ATENCAO|ALERTA") String prioridade) {}
+
+    public record ResumoRecomendacoesResposta(String resumo, String aviso) {}
+
     public record Parada(Long id, String nome, TipoPonto tipo, double latitude, double longitude,
                          double distanciaDaOrigemM, double desvioM, boolean sombra, boolean gratuito,
                          String voucher) {}
@@ -34,8 +49,10 @@ public final class AppDtos {
     public record RotaResposta(double distanciaDiretaM, String modo, List<Parada> paradas,
                                List<AlertaRota> alertas, String linkMapa, String aviso) {}
 
+    /** "ofertaId" é opcional: sem ele, vale a primeira oferta vigente do local. */
     public record VoucherRequest(
             @NotNull Long pontoId,
+            Long ofertaId,
             @NotNull @DecimalMin("-90.0") @DecimalMax("90.0") Double latitude,
             @NotNull @DecimalMin("-180.0") @DecimalMax("180.0") Double longitude) {}
 
