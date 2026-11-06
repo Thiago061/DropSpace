@@ -1,0 +1,8 @@
+{
+  "name": "zonageo-frontend-tests",
+  "private": true,
+  "type": "module",
+  "description": "Só para testar o painel admin (JS) em um DOM simulado. O app em si não depende de Node.",
+  "scripts": { "test:front": "node frontend-tests/painel.test.mjs" },
+  "devDependencies": { "jsdom": "^30.1.3" }
+}

@@ -1,0 +1,126 @@
+### Teste a API pelo VS Code com a extensão "REST Client" (humao.rest-client).
+### Clique em "Send Request" acima de cada bloco. Ordem sugerida: de cima para baixo.
+
+@host = http://localhost:8080
+
+### 1. Saúde
+GET {{host}}/api/health
+
+### 2. Planos (público)
+GET {{host}}/api/planos
+
+### 3. Login do administrador (use o usuário/senha do seu .env)
+# @name loginAdmin
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{ "login": "Zona1", "senha": "SUA_SENHA_DO_ENV" }
+
+###
+@adminToken = {{loginAdmin.response.body.token}}
+
+### 3b. Buscar um lugar por nome (admin). Usa Google se houver chave, senão OpenStreetMap
+GET {{host}}/api/admin/lugares?q=Sobradinho
+Authorization: Bearer {{adminToken}}
+
+### 4. Cadastrar mercado parceiro (admin)
+POST {{host}}/api/admin/pontos
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "nome": "Atacadão Dia a Dia",
+  "tipo": "MERCADO_PARCEIRO",
+  "latitude": -15.7930,
+  "longitude": -47.8840,
+  "gratuito": false,
+  "sombra": false
+}
+
+### 4b. Cadastrar a oferta de voucher desse mercado (troque pontoId pelo id devolvido acima)
+POST {{host}}/api/admin/ofertas
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{ "pontoId": 4, "titulo": "1 água mineral 500 ml", "descricao": "Uma por cliente", "validoAte": "2027-12-31" }
+
+### 4c. Usuários cadastrados, resumo e acessos (admin)
+GET {{host}}/api/admin/usuarios?q=&pagina=0&tamanho=20
+Authorization: Bearer {{adminToken}}
+
+###
+GET {{host}}/api/admin/usuarios/resumo
+Authorization: Bearer {{adminToken}}
+
+###
+GET {{host}}/api/admin/acessos
+Authorization: Bearer {{adminToken}}
+
+### 5. Registrar ocorrência (admin)
+POST {{host}}/api/ocorrencias
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "titulo": "Foco de queimada",
+  "categoria": "Queimada",
+  "severidade": "Alto",
+  "latitude": -15.7990,
+  "longitude": -47.8800,
+  "status": "Aberto"
+}
+
+### 6. Cadastro de um usuário do app
+# @name registro
+POST {{host}}/api/auth/registro
+Content-Type: application/json
+
+{ "nome": "Maria Teste", "email": "maria@example.com", "senha": "senha-forte-123" }
+
+###
+@userToken = {{registro.response.body.token}}
+@userId = {{registro.response.body.usuario.id}}
+
+### 7. Recomendações da localidade (plano Free)
+GET {{host}}/api/app/localidade?lat=-15.7939&lon=-47.8828&raio=3000
+Authorization: Bearer {{userToken}}
+
+### 8. Rota segura: deve responder 403 no Free
+GET {{host}}/api/app/rotas/segura?origemLat=-15.7939&origemLon=-47.8828&destinoLat=-15.7990&destinoLon=-47.8700
+Authorization: Bearer {{userToken}}
+
+### 9. Admin libera o Pro por 30 dias
+PATCH {{host}}/api/admin/usuarios/{{userId}}/plano
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{ "plano": "PRO", "dias": 30 }
+
+### 10. Rota segura agora funciona (Pro)
+GET {{host}}/api/app/rotas/segura?origemLat=-15.7939&origemLon=-47.8828&destinoLat=-15.7990&destinoLon=-47.8700
+Authorization: Bearer {{userToken}}
+
+### 11. Gerar voucher (troque pontoId pelo id do mercado e use coordenadas perto dele)
+# @name voucher
+POST {{host}}/api/app/vouchers
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{ "pontoId": 4, "latitude": -15.7931, "longitude": -47.8841 }
+
+###
+@codigo = {{voucher.response.body.codigo}}
+
+### 12. Caixa do mercado confere e resgata o código (admin)
+POST {{host}}/api/admin/vouchers/resgatar
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{ "codigo": "{{codigo}}" }
+
+### 13. Tentar resgatar de novo deve dar 409 (já utilizado)
+POST {{host}}/api/admin/vouchers/resgatar
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{ "codigo": "{{codigo}}" }
