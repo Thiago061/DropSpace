@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DropSpace — Tecnologia com preço justo</title>
+  <meta name="description" content="PCs, notebooks, celulares e consoles com preço no Pix e parcelamento sem juros.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip" href="#produtos">Ir para os produtos</a>
+  <div class="topbar">Frete grátis acima de R$ 3.000 · 10x sem juros em todo o site</div>
+
+  <header class="header">
+    <div class="container header__row">
+      <a class="logo" href="/" aria-label="DropSpace, página inicial">Drop<span>Space</span></a>
+      <form class="search" role="search" id="searchForm">
+        <label for="q" class="sr">Buscar produtos</label>
+        <input id="q" type="search" placeholder="Busque produtos, marcas ou categorias" autocomplete="off">
+        <button type="submit" class="btn btn--accent">Buscar</button>
+      </form>
+      <div class="actions">
+        <button class="icon-btn" id="accountBtn" type="button">👤 <span id="accountLabel">Entrar</span></button>
+        <button class="icon-btn" id="cartBtn" type="button" aria-label="Abrir carrinho">🛒 <span class="badge" id="cartCount">0</span></button>
+      </div>
+    </div>
+    <nav class="nav" aria-label="Departamentos">
+      <div class="container nav__row" id="nav">
+        <button data-cat="" class="active">Tudo</button>
+        <button data-cat="pc">PCs</button>
+        <button data-cat="notebook">Notebooks</button>
+        <button data-cat="celular">Celulares</button>
+        <button data-cat="console">Consoles</button>
+        <button data-cat="acessorio">Acessórios</button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <p class="hero__tag">Novidade</p>
+        <h1>Sua primeira compra de tecnologia, sem complicação</h1>
+        <p>Preços claros, pagamento no Pix com desconto e parcelamento em até 10x sem juros.</p>
+        <a class="btn btn--accent" href="#produtos">Ver ofertas</a>
+      </div>
+    </section>
+
+    <section class="benefits container" aria-label="Vantagens">
+      <div><strong>Pix com desconto</strong><span>O preço do card já é à vista</span></div>
+      <div><strong>10x sem juros</strong><span>No cartão de crédito</span></div>
+      <div><strong>Compra segura</strong><span>Seus dados protegidos</span></div>
+      <div><strong>Troca facilitada</strong><span>7 dias para desistir</span></div>
+    </section>
+
+    <section class="container" id="produtos" aria-labelledby="titulo">
+      <div class="section-head">
+        <h2 id="titulo">Todos os produtos</h2>
+        <label class="sort"><span>Ordenar:</span>
+          <select id="sort"><option value="">Relevância</option><option value="asc">Menor preço</option><option value="desc">Maior preço</option></select>
+        </label>
+      </div>
+      <p id="status" role="status" aria-live="polite"></p>
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <section class="container help">
+      <h2>Primeira vez comprando eletrônicos?</h2>
+      <ul>
+        <li><strong>PC:</strong> computador de mesa, mais potente pelo mesmo preço.</li>
+        <li><strong>Notebook:</strong> computador portátil, ótimo para estudo e trabalho.</li>
+        <li><strong>Console:</strong> aparelho dedicado a jogos, conectado à TV.</li>
+        <li><strong>Pix:</strong> pagamento instantâneo, com o menor preço.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__row">
+      <div><strong>Atendimento</strong><p>contato@dropspace.example<br>Seg a Sex, 9h às 18h</p></div>
+      <div><strong>Institucional</strong><p>Sobre nós<br>Política de privacidade<br>Trocas e devoluções</p></div>
+      <div><strong>Pagamento</strong><p>Pix · Cartão de crédito · Boleto</p></div>
+    </div>
+    <p class="footer__legal">© 2026 DropSpace. Projeto de demonstração.</p>
+  </footer>
+
+  <dialog id="cartDlg" aria-labelledby="cartTitle">
+    <div class="dlg__head"><h2 id="cartTitle">Seu carrinho</h2><button class="icon-btn close" data-close aria-label="Fechar">✕</button></div>
+    <div id="cartItems"></div>
+    <p class="total">Total no Pix: <strong id="cartTotal">R$ 0,00</strong></p>
+    <p id="cartMsg" role="status" aria-live="polite"></p>
+    <button class="btn btn--accent btn--block" id="checkoutBtn">Finalizar compra</button>
+  </dialog>
+
+  <dialog id="authDlg" aria-labelledby="authTitle">
+    <div class="dlg__head"><h2 id="authTitle">Entrar</h2><button class="icon-btn close" data-close aria-label="Fechar">✕</button></div>
+    <form id="authForm">
+      <div id="nameRow" hidden><label for="name">Nome</label><input id="name" autocomplete="name"></div>
+      <label for="email">E-mail</label><input id="email" type="email" autocomplete="email" required>
+      <label for="password">Senha (mínimo 6 caracteres)</label><input id="password" type="password" autocomplete="current-password" required minlength="6">
+      <p id="authMsg" role="alert"></p>
+      <button class="btn btn--accent btn--block" type="submit" id="authSubmit">Entrar</button>
+    </form>
+    <button class="link" id="authToggle" type="button">Não tem conta? Cadastre-se</button>
+  </dialog>
+
+  <dialog id="ordersDlg" aria-labelledby="ordersTitle">
+    <div class="dlg__head"><h2 id="ordersTitle">Minha conta</h2><button class="icon-btn close" data-close aria-label="Fechar">✕</button></div>
+    <div id="ordersList"></div>
+    <button class="btn btn--block" id="logoutBtn">Sair</button>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
