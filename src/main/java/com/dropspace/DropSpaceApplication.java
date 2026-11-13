@@ -11,6 +11,7 @@ public class DropSpaceApplication {
 
     /** Cadastra produtos de exemplo na primeira execução. */
     @Bean
+<<<<<<< HEAD
     CommandLineRunner seed(Products products, Videos videos) {
         return args -> {
             if (videos.count() == 0) {
@@ -18,6 +19,10 @@ public class DropSpaceApplication {
                 videos.save(new Video("pRHOPltt8FY", "Qual é o melhor PC de entrada em 2026?", "Reset Hub", "Testes reais comparando um PC montado com peças novas contra um kit Xeon.", "pc", 2));
                 videos.save(new Video("pFTgWgb5wiM", "Como escolher as melhores peças de PC", "YouTube", "Guia para entender e escolher as peças certas na hora de comprar ou montar.", "pc", 3));
             }
+=======
+    CommandLineRunner seed(Products products) {
+        return args -> {
+>>>>>>> c72c07fe08313c6df2b2e54c9bbf3e5ffeed1440
             if (products.count() > 0) return;
             products.save(new Product("PC Gamer Ryzen 5 5600, RTX 4060, 16GB DDR4, SSD 500GB", "pc", "DropSpace", "4599.90", "5299.90", 8, 4.7, 128));
             products.save(new Product("PC Home Office Core i3, 8GB, SSD 240GB", "pc", "DropSpace", "1999.90", null, 15, 4.4, 56));

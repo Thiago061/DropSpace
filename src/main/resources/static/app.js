@@ -134,6 +134,7 @@ $('#authForm').addEventListener('submit', async e => {
 });
 
 updateAccount(); loadProducts().then(renderCart);
+<<<<<<< HEAD
 
 /* ---------- Aprenda (vídeos) ---------- */
 async function loadVideos() {
@@ -166,3 +167,5 @@ $('#videos').addEventListener('click', e => {
   if (go) document.querySelector(`#nav [data-cat="${go.dataset.goto}"]`)?.click();
 });
 loadVideos();
+=======
+>>>>>>> c72c07fe08313c6df2b2e54c9bbf3e5ffeed1440

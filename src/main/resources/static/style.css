@@ -58,6 +58,7 @@ dialog input{width:100%;min-height:44px;padding:0 var(--s3);border:2px solid var
 .total{text-align:right;font-size:1.1rem}.link{background:none;border:0;color:#2d6cdf;cursor:pointer;margin-top:var(--s3);min-height:44px;text-decoration:underline}
 #authMsg,#cartMsg{min-height:1.4em;font-size:.9rem;color:var(--err)}#cartMsg.ok{color:var(--ok)}
 #status{color:var(--muted)}
+<<<<<<< HEAD
 .nav__link{color:#fff;min-height:44px;display:inline-flex;align-items:center;padding:0 var(--s4);font-weight:700;color:var(--accent);text-decoration:none;white-space:nowrap}
 .learn{margin-top:var(--s6)}.learn h2{margin-bottom:var(--s1)}.learn__intro,.learn__credit,#videoStatus{color:var(--muted)}.learn__credit{font-size:.8rem}
 .videos{display:grid;gap:var(--s4);grid-template-columns:1fr}
@@ -69,3 +70,5 @@ dialog input{width:100%;min-height:44px;padding:0 var(--s3);border:2px solid var
 .video__play span{background:var(--accent);color:#1c1f2a;font-weight:700;border-radius:99px;padding:var(--s2) var(--s4)}
 .video__body{padding:var(--s3);display:flex;flex-direction:column;gap:var(--s2);flex:1}
 .video__body h3{margin:0;font-size:1rem}.video__body p{margin:0;font-size:.9rem;color:var(--muted)}.video__body .btn{margin-top:auto}
+=======
+>>>>>>> c72c07fe08313c6df2b2e54c9bbf3e5ffeed1440

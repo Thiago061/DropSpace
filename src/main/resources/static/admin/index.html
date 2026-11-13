@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Zona GEO | Administração</title>
+  <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+
+  <!-- ================= ENTRADA ================= -->
+  <section id="tela-login" class="login-wrap">
+    <form id="form-login" class="login-card" autocomplete="on">
+      <div class="brand brand-dark"><span class="brand-mark">ZG</span><div><strong>Zona GEO</strong><small>ADMINISTRAÇÃO</small></div></div>
+      <label>Usuário<input name="login" autocomplete="username" required maxlength="160" autofocus></label>
+      <label>Senha<input name="senha" type="password" autocomplete="current-password" required maxlength="72"></label>
+      <label class="check"><input type="checkbox" id="mostrar-senha"> Mostrar senha</label>
+      <button type="submit" id="botao-entrar">Entrar</button>
+      <p class="message" id="msg-login" role="alert"></p>
+      <p class="footnote"><a href="/">Voltar ao site</a></p>
+    </form>
+  </section>
+
+  <!-- ================= PAINEL ================= -->
+  <div id="tela-painel" hidden>
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark">ZG</span><div><strong>Zona GEO</strong><small>ADMINISTRAÇÃO</small></div></div>
+      <nav id="menu">
+        <a href="#painel" data-view="painel" class="active">▦ &nbsp; Painel e mapa</a>
+        <a href="#pontos" data-view="pontos">💧 &nbsp; Pontos de apoio</a>
+        <a href="#ocorrencias" data-view="ocorrencias">⚠ &nbsp; Ocorrências</a>
+        <a href="#vouchers" data-view="vouchers">🎟 &nbsp; Vouchers</a>
+        <a href="#usuarios" data-view="usuarios">👥 &nbsp; Usuários</a>
+      </nav>
+      <button id="btn-sair" class="button-light sidebar-exit" type="button">Sair</button>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div><span class="eyebrow">ÁREA RESTRITA</span><h1 id="titulo-view">Painel e mapa</h1><p id="usuario-logado"></p></div>
+        <span class="pill" id="status-api"><i></i> API conectada</span>
+      </header>
+      <p id="aviso-global" class="message" role="alert"></p>
+
+      <!-- ---------- Painel e mapa ---------- -->
+      <section class="view" data-view="painel">
+        <section class="stats">
+          <article class="stat"><span>Pontos de apoio</span><strong id="ind-pontos">—</strong><small>Ativos</small></article>
+          <article class="stat"><span>Ocorrências abertas</span><strong id="ind-abertas">—</strong><small>Não encerradas</small></article>
+          <article class="stat"><span>Usuários</span><strong id="ind-usuarios">—</strong><small>No aplicativo</small></article>
+          <article class="stat"><span>Assinantes Pro</span><strong id="ind-pro">—</strong><small>Plano vigente</small></article>
+        </section>
+        <section class="panel">
+          <div class="panel-heading"><div><span class="eyebrow">MAPA</span><h2>Pontos e ocorrências</h2></div></div>
+          <div id="mapa-geral" class="mapa-grande"></div>
+          <p class="legend"><span class="dot dot-agua"></span> Água <span class="dot dot-sombra"></span> Sombra <span class="dot dot-abrigo"></span> Abrigo <span class="dot dot-parceiro"></span> Parceiro <span class="dot dot-ocorrencia"></span> Ocorrência</p>
+        </section>
+      </section>
+
+      <!-- ---------- Pontos de apoio ---------- -->
+      <section class="view" data-view="pontos" hidden>
+        <div class="columns">
+          <section class="panel">
+            <div class="panel-heading"><div><span class="eyebrow">CADASTRO</span><h2 id="titulo-form-ponto">Novo ponto de apoio</h2></div></div>
+            <form id="form-ponto">
+              <div class="seletor" data-seletor>
+                <label>Buscar o local pelo nome
+                  <span class="busca-linha">
+                    <input type="search" data-busca placeholder="Ex.: Sobradinho, Atacadão Dia a Dia" maxlength="120">
+                    <button type="button" data-buscar>Buscar</button>
+                  </span>
+                </label>
+                <p class="message" data-aviso></p>
+                <ul class="resultados" data-resultados></ul>
+                <div class="mapa-mini" data-mapa></div>
+                <p class="subtle">Clique no mapa ou arraste o marcador para ajustar o ponto exato.</p>
+                <div class="form-row">
+                  <label>Latitude<input name="latitude" type="number" step="any" min="-90" max="90" required></label>
+                  <label>Longitude<input name="longitude" type="number" step="any" min="-180" max="180" required></label>
+                </div>
+              </div>
+              <label>Nome<input name="nome" required maxlength="120" placeholder="Ex.: Atacadão Dia a Dia"></label>
+              <label>Tipo
+                <select name="tipo">
+                  <option value="PONTO_AGUA">Ponto de água</option>
+                  <option value="DESCANSO_SOMBRA">Descanso / sombra (parque, praça)</option>
+                  <option value="ABRIGO_FRIO">Abrigo contra o frio</option>
+                  <option value="MERCADO_PARCEIRO">Mercado parceiro</option>
+                </select>
+              </label>
+              <label>Endereço<input name="endereco" maxlength="200"></label>
+              <label>Horário<input name="horario" maxlength="120" placeholder="Ex.: Seg a Sáb, 8h às 20h"></label>
+              <label>Descrição<textarea name="descricao" rows="2" maxlength="500"></textarea></label>
+              <div class="checks">
+                <label class="check"><input type="checkbox" name="gratuito" checked> Gratuito</label>
+                <label class="check"><input type="checkbox" name="sombra"> Tem sombra</label>
+              </div>
+              <p class="subtle">Os vouchers dos mercados parceiros são cadastrados na página <b>Vouchers</b>.</p>
+              <div class="form-row"><button type="submit">Salvar ponto</button><button type="button" id="cancelar-ponto" class="button-light" hidden>Cancelar edição</button></div>
+              <p class="message" id="msg-ponto" role="status"></p>
+            </form>
+          </section>
+          <section class="panel">
+            <div class="panel-heading"><div><span class="eyebrow">LISTA</span><h2>Pontos cadastrados</h2></div></div>
+            <div class="table-wrap"><table><thead><tr><th>Nome</th><th>Tipo</th><th>Situação</th><th></th></tr></thead><tbody id="lista-pontos"><tr><td colspan="4">Carregando…</td></tr></tbody></table></div>
+          </section>
+        </div>
+      </section>
+
+      <!-- ---------- Ocorrências ---------- -->
+      <section class="view" data-view="ocorrencias" hidden>
+        <div class="columns">
+          <section class="panel">
+            <div class="panel-heading"><div><span class="eyebrow">REGISTRO</span><h2>Nova ocorrência</h2></div></div>
+            <form id="form-ocorrencia">
+              <div class="seletor" data-seletor>
+                <label>Buscar o local pelo nome
+                  <span class="busca-linha">
+                    <input type="search" data-busca placeholder="Ex.: Sobradinho" maxlength="120">
+                    <button type="button" data-buscar>Buscar</button>
+                  </span>
+                </label>
+                <p class="message" data-aviso></p>
+                <ul class="resultados" data-resultados></ul>
+                <div class="mapa-mini" data-mapa></div>
+                <div class="form-row">
+                  <label>Latitude<input name="latitude" type="number" step="any" min="-90" max="90" required></label>
+                  <label>Longitude<input name="longitude" type="number" step="any" min="-180" max="180" required></label>
+                </div>
+              </div>
+              <label>Título<input name="titulo" required maxlength="140" placeholder="Ex.: Foco de queimada"></label>
+              <div class="form-row">
+                <label>Categoria<select name="categoria"><option>Queimada</option><option>Calor extremo</option><option>Umidade crítica</option><option>Inundação</option><option>Tempestade</option><option>Outro evento natural</option></select></label>
+                <label>Severidade<select name="severidade"><option>Baixo</option><option selected>Moderado</option><option>Alto</option><option>Crítico</option></select></label>
+              </div>
+              <label>Descrição<textarea name="descricao" rows="2"></textarea></label>
+              <button type="submit">Registrar ocorrência</button>
+              <p class="message" id="msg-ocorrencia" role="status"></p>
+            </form>
+          </section>
+          <section class="panel">
+            <div class="panel-heading"><div><span class="eyebrow">ACOMPANHAMENTO</span><h2>Ocorrências</h2></div></div>
+            <div class="table-wrap"><table><thead><tr><th>Ocorrência</th><th>Severidade</th><th>Status</th></tr></thead><tbody id="lista-ocorrencias"><tr><td colspan="3">Carregando…</td></tr></tbody></table></div>
+            <p class="footnote">Ocorrências Resolvidas, Canceladas ou Falso positivo deixam de aparecer para os usuários.</p>
+          </section>
+        </div>
+      </section>
+
+      <!-- ---------- Vouchers ---------- -->
+      <section class="view" data-view="vouchers" hidden>
+        <div class="columns">
+          <div>
+            <section class="panel">
+              <div class="panel-heading"><div><span class="eyebrow">CADASTRO</span><h2 id="titulo-form-oferta">Nova oferta de voucher</h2></div></div>
+              <form id="form-oferta">
+                <label>Mercado parceiro<select name="pontoId"></select></label>
+                <label>Produto do catálogo<select name="produtoCatalogo"><option value="">Escolha um produto</option></select></label>
+                <label>Produto<input name="titulo" required maxlength="120" placeholder="Selecione ou informe um produto"></label>
+                <div class="form-row">
+                  <label>Unidade<input name="unidade" required maxlength="80" placeholder="Ex.: Garrafa"></label>
+                  <label>Preço sugerido (R$)<input name="valor" type="number" required min="0" step="0.01" placeholder="0,00"></label>
+                </div>
+                <label>Descrição<textarea name="descricao" rows="2" maxlength="300" placeholder="Detalhes do produto"></textarea></label>
+                <p class="footnote">A oferta fica disponível permanentemente enquanto estiver ativa. Você pode ajustar o preço para cada mercado.</p>
+                <div class="form-row"><button type="submit">Salvar oferta</button><button type="button" id="cancelar-oferta" class="button-light" hidden>Cancelar edição</button></div>
+                <p class="message" id="msg-oferta" role="status"></p>
+              </form>
+            </section>
+            <section class="panel">
+              <div class="panel-heading"><div><span class="eyebrow">CAIXA</span><h2>Conferir voucher de cliente</h2></div></div>
+              <form id="form-resgate">
+                <label>Código apresentado<input name="codigo" required maxlength="20" placeholder="ZG-XXXX-XXXX" autocomplete="off"></label>
+                <button type="submit">Resgatar</button>
+                <p class="message" id="msg-resgate" role="status"></p>
+              </form>
+            </section>
+          </div>
+          <div>
+            <section class="panel">
+              <div class="panel-heading"><div><span class="eyebrow">CATÁLOGO</span><h2>Ofertas cadastradas</h2></div></div>
+              <div class="table-wrap"><table><thead><tr><th>Mercado</th><th>Produto</th><th>Unidade</th><th>Preço</th><th>Situação</th><th></th></tr></thead><tbody id="lista-ofertas"><tr><td colspan="6">Carregando…</td></tr></tbody></table></div>
+            </section>
+            <section class="panel">
+              <div class="panel-heading"><div><span class="eyebrow">HISTÓRICO</span><h2>Vouchers emitidos</h2></div></div>
+              <div class="table-wrap"><table><thead><tr><th>Código</th><th>Local</th><th>Item</th><th>Status</th></tr></thead><tbody id="lista-emitidos"><tr><td colspan="4">Carregando…</td></tr></tbody></table></div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- Usuários ---------- -->
+      <section class="view" data-view="usuarios" hidden>
+        <section class="stats">
+          <article class="stat"><span>Usuários cadastrados</span><strong id="res-total">—</strong><small>Total</small></article>
+          <article class="stat"><span>Novos</span><strong id="res-novos">—</strong><small>Últimos 7 dias</small></article>
+          <article class="stat"><span>Entraram</span><strong id="res-ativos">—</strong><small>Últimos 7 dias</small></article>
+          <article class="stat"><span>Assinantes Pro</span><strong id="res-pro">—</strong><small>Plano vigente</small></article>
+        </section>
+        <section class="panel">
+          <div class="tabs">
+            <button type="button" class="aba ativa" data-aba-usuarios="lista">Usuários</button>
+            <button type="button" class="aba" data-aba-usuarios="acessos">Acessos recentes</button>
+          </div>
+          <p class="message" id="msg-usuarios" role="status"></p>
+
+          <div id="aba-lista">
+            <div class="barra-filtro">
+              <input id="busca-usuarios" type="search" placeholder="Buscar por nome ou e-mail" maxlength="100">
+              <label class="inline">Dias de Pro <input id="dias-pro" type="number" min="1" max="3650" value="30"></label>
+            </div>
+            <div class="table-wrap"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Plano</th><th>Cadastro</th><th>Último acesso</th><th>Situação</th><th></th></tr></thead><tbody id="lista-usuarios"><tr><td colspan="7">Carregando…</td></tr></tbody></table></div>
+            <div class="paginacao">
+              <button type="button" id="pagina-anterior" class="button-light">← Anterior</button>
+              <span id="info-pagina" class="subtle"></span>
+              <button type="button" id="pagina-seguinte" class="button-light">Próxima →</button>
+            </div>
+            <p class="footnote">Enquanto o pagamento online não existe, o plano Pro é liberado manualmente aqui.</p>
+          </div>
+
+          <div id="aba-acessos" hidden>
+            <div class="table-wrap"><table><thead><tr><th>Quando</th><th>Usuário</th><th>Resultado</th><th>IP</th></tr></thead><tbody id="lista-acessos"><tr><td colspan="4">Carregando…</td></tr></tbody></table></div>
+            <p class="footnote">Mostra as últimas 100 tentativas de entrada. O IP é dado pessoal (LGPD): defina por quanto tempo guardar.</p>
+          </div>
+        </section>
+      </section>
+
+      <footer>Zona GEO · Painel administrativo</footer>
+    </main>
+  </div>
+
+  <script src="/vendor/leaflet/leaflet.js"></script>
+  <script type="module" src="/js/admin/main.js"></script>
+</body>
+</html>
