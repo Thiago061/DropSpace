@@ -1,0 +1,25 @@
+<a class="skip" href="#conteudo">Ir para o conteúdo</a>
+<div class="topbar">Frete grátis acima de R$ 3.000 · 10x sem juros em todo o site</div>
+<header class="header">
+  <div class="container header__row">
+    <a class="logo" href="index.html" aria-label="DropSpace, página inicial">Drop<span>Space</span></a>
+    <form class="search" role="search" id="searchForm">
+      <label for="q" class="sr">Buscar produtos</label>
+      <input id="q" type="search" placeholder="Busque produtos, marcas ou categorias" autocomplete="off">
+      <button type="submit" class="btn btn--accent">Buscar</button>
+    </form>
+    <div class="actions">
+      <a class="icon-btn" href="conta.html" data-nav="conta">👤 <span id="accountLabel">Entrar</span></a>
+      <a class="icon-btn" href="carrinho.html" data-nav="carrinho" aria-label="Carrinho">🛒 <span class="badge" id="cartCount">0</span></a>
+    </div>
+  </div>
+  <nav class="nav" aria-label="Departamentos">
+    <div class="container nav__row" id="nav">
+      <a href="index.html" data-nav="loja">Loja</a>
+      <span id="navCats" class="contents"></span>
+      <a class="nav__link" href="videos.html" data-nav="videos">Aprenda a montar seu PC</a>
+      <a class="nav__link" href="admin.html" data-nav="admin" id="adminLink" hidden>Admin</a>
+    </div>
+  </nav>
+</header>
+<template id="tplNavCat"><a data-bind="href:href;text:label;data-nav:key"></a></template>

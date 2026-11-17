@@ -12,6 +12,9 @@ public class Product {
     public BigDecimal price;  // preço à vista no Pix
     public BigDecimal oldPrice; // null quando não há promoção
     public int stock;
+    public String sku;
+    public String imageUrl;  // ex.: /uploads/abc.jpg
+    @Version @com.fasterxml.jackson.annotation.JsonIgnore public Integer version; // evita vender o mesmo estoque 2x
     public double rating;
     public int reviews;
 

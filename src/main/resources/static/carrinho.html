@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Carrinho — DropSpace</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app-header"></div>
+  <main id="conteudo" class="container page">
+    <h1>Seu carrinho</h1>
+    <p id="status" role="status" aria-live="polite"></p>
+    <div class="cols">
+      <section aria-label="Itens do carrinho"><div id="items"></div><p id="empty" hidden>Seu carrinho está vazio. <a href="index.html">Ver produtos</a></p></section>
+      <aside class="panel" aria-label="Resumo do pedido">
+        <h2>Resumo</h2>
+        <form id="cepForm" novalidate>
+          <label for="cep">CEP de entrega</label>
+          <div class="row"><input id="cep" inputmode="numeric" maxlength="9" placeholder="00000-000" autocomplete="postal-code"><button class="btn" type="submit">Calcular frete</button></div>
+        </form>
+        <p id="cepMsg" role="status" aria-live="polite"></p>
+        <dl class="sum"><dt>Subtotal (Pix)</dt><dd id="sub">R$ 0,00</dd><dt>Frete</dt><dd id="ship">Informe o CEP</dd><dt>Total</dt><dd id="total">R$ 0,00</dd></dl>
+        <p id="msg" role="status" aria-live="polite"></p>
+        <button class="btn btn--accent btn--block" id="buy" type="button">Finalizar compra</button>
+      </aside>
+    </div>
+    <section id="done" class="panel narrow" hidden><h1>Pedido criado!</h1><p id="doneText"></p><a class="btn btn--accent" href="conta.html">Ver meus pedidos</a></section>
+    <template id="tplCartLine">
+      <div class="line"><span><a data-bind="href:href;text:name"></a><br><strong data-bind="text:price"></strong></span>
+        <span class="qty"><button data-bind="data-dec:id" aria-label="Diminuir quantidade">−</button><output data-bind="text:qty"></output><button data-bind="data-inc:id" aria-label="Aumentar quantidade">+</button></span></div>
+    </template>
+  </main>
+  <div id="app-footer"></div>
+  <script src="common.js"></script>
+  <script src="carrinho.js"></script>
+</body>
+</html>

@@ -10,6 +10,9 @@ import java.util.List;
 public class CustomerOrder {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) public Long id;
     public Long userId;
+    public BigDecimal subtotal;
+    public BigDecimal shipping;
+    public String cep;
     public BigDecimal total;
     public String status = "PAGAMENTO_PENDENTE";
     public LocalDateTime createdAt = LocalDateTime.now();

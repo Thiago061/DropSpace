@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Painel administrativo — DropSpace</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app-header"></div>
+  <main id="conteudo" class="container page">
+    <h1>Painel administrativo</h1>
+    <p id="status" role="status" aria-live="polite"></p>
+    <div id="adminBox" hidden>
+      <section aria-label="Resumo"><dl class="stats" id="stats"></dl></section>
+      <div class="cols">
+        <section class="panel" aria-labelledby="fTitle"><h2 id="fTitle">Cadastrar produto</h2>
+          <form id="pForm" novalidate>
+            <label for="pName">Nome</label><input id="pName" required>
+            <label for="pCat">Categoria</label><select id="pCat"></select>
+            <label for="pBrand">Marca</label><input id="pBrand">
+            <label for="pSku">Código (SKU)</label><input id="pSku">
+            <label for="pPrice">Preço à vista no Pix (R$)</label><input id="pPrice" type="number" step="0.01" min="0.01" required>
+            <label for="pOld">Preço antigo (opcional, só em promoção real)</label><input id="pOld" type="number" step="0.01" min="0">
+            <div id="pStockRow"><label for="pStock">Estoque inicial</label><input id="pStock" type="number" min="0" value="0"></div>
+            <label for="pImg">Foto (JPG, PNG ou WEBP, até 2 MB)</label><input id="pImg" type="file" accept="image/jpeg,image/png,image/webp">
+            <p id="pMsg" role="status" aria-live="polite"></p>
+            <button class="btn btn--accent" type="submit" id="pSave">Salvar produto</button> <button class="btn" type="button" id="pCancel" hidden>Cancelar edição</button>
+          </form></section>
+        <div>
+          <section class="panel" aria-labelledby="sTitle"><h2 id="sTitle">Movimentar estoque</h2>
+            <form id="sForm" novalidate>
+              <label for="sProd">Produto</label><select id="sProd"></select>
+              <label for="sType">Tipo</label><select id="sType"><option value="ENTRADA">Entrada (chegou mercadoria)</option><option value="SAIDA">Saída (perda, avaria)</option><option value="AJUSTE">Ajuste (contagem física)</option></select>
+              <label for="sQty">Quantidade</label><input id="sQty" type="number" min="0" required>
+              <label for="sNote">Observação</label><input id="sNote" placeholder="Ex.: nota fiscal 1234">
+              <p id="sMsg" role="status" aria-live="polite"></p>
+              <button class="btn btn--accent" type="submit">Registrar</button>
+            </form></section>
+          <section class="panel gap" aria-labelledby="cTitle"><h2 id="cTitle">Categorias</h2>
+            <ul class="cat-list" id="catList"></ul>
+            <form id="cForm" novalidate class="row">
+              <label class="sr" for="cName">Nome da categoria</label><input id="cName" placeholder="Nova categoria" required>
+              <label class="sr" for="cIcon">Ícone (emoji)</label><input id="cIcon" placeholder="📦" maxlength="4" class="icon-input">
+              <button class="btn" type="submit">Adicionar</button>
+            </form><p id="cMsg" role="status" aria-live="polite"></p></section>
+        </div>
+      </div>
+      <h2>Produtos</h2>
+      <div class="scroll"><table><thead><tr><th>Foto</th><th>Produto</th><th>Preço</th><th>Estoque</th><th>Ações</th></tr></thead><tbody id="pBody"></tbody></table></div>
+      <h2>Últimas movimentações</h2>
+      <div class="scroll"><table><thead><tr><th>Data</th><th>Produto</th><th>Tipo</th><th>Qtd.</th><th>Saldo</th><th>Obs.</th></tr></thead><tbody id="mBody"></tbody></table></div>
+    </div>
+    <template id="tplStat"><div><dt data-bind="text:label"></dt><dd data-bind="text:value"></dd></div></template>
+    <template id="tplCatRow"><li><span data-bind="text:label"></span><span><button class="btn btn--sm" data-bind="data-cat-edit:slug">Renomear</button> <button class="btn btn--sm btn--danger" data-bind="data-cat-del:slug">Excluir</button></span></li></template>
+    <template id="tplProdRow"><tr>
+      <td><img data-bind="src:image;hidden:image" alt="" width="48" height="48"><span data-bind="hidden:noImage">—</span></td>
+      <td><span data-bind="text:name"></span><br><span class="muted small" data-bind="text:meta"></span></td>
+      <td><span data-bind="text:price"></span><br><s class="small" data-bind="text:oldPrice"></s></td>
+      <td data-bind="text:stock;class:stockClass"></td>
+      <td><button class="btn btn--sm" data-bind="data-edit:id">Editar</button> <button class="btn btn--sm btn--danger" data-bind="data-del:id">Excluir</button></td></tr></template>
+    <template id="tplMoveRow"><tr><td data-bind="text:date"></td><td data-bind="text:product"></td><td data-bind="text:type"></td><td data-bind="text:qty"></td><td data-bind="text:balance"></td><td data-bind="text:note"></td></tr></template>
+  </main>
+  <div id="app-footer"></div>
+  <script src="common.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

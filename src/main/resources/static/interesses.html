@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Seus interesses — DropSpace</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app-header"></div>
+  <main id="conteudo" class="container page">
+    <section class="panel">
+      <ol class="steps" aria-label="Etapas do cadastro"><li>1. Seus dados</li><li aria-current="step">2. Seus interesses</li></ol>
+      <h1>O que você procura?</h1>
+      <p class="muted">Escolha quantas opções quiser. Usamos isso para mostrar primeiro o que combina com você.</p>
+      <div class="interests" id="interests" role="group" aria-label="Interesses"></div>
+      <p id="msg" role="alert" class="err"></p>
+      <div class="actions-row"><button class="btn btn--accent" id="continue" type="button" disabled>Continuar</button><button class="btn" id="skip" type="button">Pular</button></div>
+    </section>
+    <template id="tplInterest"><button type="button" class="interest" aria-pressed="false" data-bind="data-slug:slug"><span class="interest__icon" aria-hidden="true" data-bind="text:icon"></span><span data-bind="text:name"></span></button></template>
+  </main>
+  <div id="app-footer"></div>
+  <script src="common.js"></script>
+  <script src="interesses.js"></script>
+</body>
+</html>

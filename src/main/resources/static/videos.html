@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aprenda a montar seu PC — DropSpace</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app-header"></div>
+  <main id="conteudo" class="container page">
+    <h1>Aprenda a montar seu PC e comprar as melhores peças</h1>
+    <p class="muted">Vídeos para quem está começando. Assista, entenda e depois escolha com segurança.</p>
+    <p id="status" role="status" aria-live="polite"></p>
+    <div class="videos" id="videos"></div>
+    <p class="muted small">Os vídeos pertencem aos seus criadores e são exibidos pelo YouTube. O DropSpace não tem vínculo comercial com os canais.</p>
+    <template id="tplVideo">
+      <article class="video">
+        <div class="video__player"><button class="video__play" data-bind="data-yt:youtubeId;data-title:title;style:thumb;aria-label:playLabel"><span>▶ Assistir</span></button></div>
+        <div class="video__body">
+          <h2 data-bind="text:title"></h2><p data-bind="text:summary"></p><p class="small" data-bind="text:channel"></p>
+          <a class="btn" data-bind="href:shopHref;text:shopLabel"></a>
+        </div>
+      </article>
+    </template>
+  </main>
+  <div id="app-footer"></div>
+  <script src="common.js"></script>
+  <script src="videos.js"></script>
+</body>
+</html>

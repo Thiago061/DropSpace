@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Minha conta — DropSpace</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app-header"></div>
+  <main id="conteudo" class="container page">
+    <section id="loginBox" class="panel narrow" hidden>
+      <h1>Entrar</h1>
+      <form id="loginForm" novalidate>
+        <label for="login">E-mail ou usuário</label><input id="login" autocomplete="username" required>
+        <label for="password">Senha</label>
+        <div class="pw"><input id="password" type="password" autocomplete="current-password" required><button type="button" class="pw__toggle" aria-pressed="false" aria-label="Mostrar senha">👁</button></div>
+        <p id="loginMsg" role="alert" class="err"></p>
+        <button class="btn btn--accent btn--block" type="submit">Entrar</button>
+      </form>
+      <p class="center">Ainda não tem conta? <a href="cadastro.html">Cadastre-se</a></p>
+    </section>
+    <section id="accountBox" hidden>
+      <h1 id="hello">Minha conta</h1>
+      <p class="muted" id="address"></p>
+      <p><a class="btn btn--sm" href="interesses.html">Alterar meus interesses</a></p>
+      <h2>Meus pedidos</h2><div id="orders"></div><p id="noOrders" hidden>Você ainda não fez nenhum pedido.</p>
+      <button class="btn" id="logout" type="button">Sair</button>
+    </section>
+    <template id="tplOrder">
+      <div class="line"><span data-bind="text:title"></span><strong data-bind="text:total"></strong></div>
+    </template>
+  </main>
+  <div id="app-footer"></div>
+  <script src="common.js"></script>
+  <script src="conta.js"></script>
+</body>
+</html>
